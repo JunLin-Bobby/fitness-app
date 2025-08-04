@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 // Register new user
 exports.register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { username, email, password } = req.body;
 
     // Check if user already exists
     let user = await User.findOne({ email });
@@ -18,7 +18,7 @@ exports.register = async (req, res) => {
     const passwordHash = await bcrypt.hash(password, salt);
 
     // Create new user
-    user = new User({ name, email, passwordHash });
+    user = new User({ name: username, email, passwordHash });
     await user.save();
 
     // Generate JWT
@@ -50,4 +50,12 @@ exports.login = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }
+};
+//Get current user info
+exports.getMe = (req, res) => {
+  console.log('req.user in getMe:', req.user); // 檢查有沒有資料
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  res.json({ username: req.user.name, id: req.user.id });
 };

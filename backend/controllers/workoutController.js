@@ -6,14 +6,17 @@ const WorkoutLog = require('../models/WorkoutLog');
 exports.createWorkout = async (req, res) => {
   try {
     const { date, muscleGroup, exercises, tags } = req.body;
-    const userId = req.user.id;
-
-    const workout = new WorkoutLog({ userId, date, muscleGroup, exercises, tags });
+    const workout = new WorkoutLog({
+      userId: req.user.id,
+      date,
+      muscleGroup,
+      exercises,
+      tags,
+    });
     await workout.save();
-
     res.status(201).json(workout);
   } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Failed to create workout log' });
   }
 };
 
