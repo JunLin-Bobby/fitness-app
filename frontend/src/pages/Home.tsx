@@ -40,12 +40,10 @@ export default function HomePage() {
 
   return (
     <div className="w-screen flex flex-col min-h-screen bg-[#F5F5DC]">
-      <main className="flex-1 pt-16">
+      <main className="flex-1 pt-3">
         <h1 className="text-3xl font-bold">
           Welcome to Fitness Tracker
-          {username && (
-            <span className="ml-2 text-blue-600">({username})</span>
-          )}
+        
         </h1>
         {!username && (
           <div className="text-3xl font-bold">

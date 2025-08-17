@@ -8,7 +8,7 @@ export default function AuthCard() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   
-  const { login, setIsAuthenticated } = useAuth();
+  const { login, setIsAuthenticated, setUser } = useAuth();
   const navigate = useNavigate();
 
   const handleGoogleLoginSuccess = async (credentialResponse: any) => {
@@ -21,7 +21,8 @@ export default function AuthCard() {
     const data = await response.json();
     if (data.token) {
       localStorage.setItem('token', data.token);
-      setIsAuthenticated(true); // 這裡直接更新 context 狀態
+      setIsAuthenticated(true);
+      setUser(data.user); // 後端請回傳 user 資料
       navigate('/');
     } else {
       setError('Google login failed');

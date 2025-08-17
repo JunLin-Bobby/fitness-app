@@ -1,11 +1,19 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import * as authService from '../services/authService';
 
+interface User {
+  name?: string;
+  username?: string;
+  email?: string;
+}
+
 interface AuthContextType {
   isAuthenticated: boolean;
+  user: User | null;
+  setUser: (u: User | null) => void;
   login: (u: string, p: string) => Promise<void>;
   logout: () => void;
-  setIsAuthenticated: (v: boolean) => void; // 新增
+  setIsAuthenticated: (v: boolean) => void;
 }
 
 // 建立 Context
@@ -14,30 +22,51 @@ const AuthContext = createContext<AuthContextType | null>(null);
 // Provider 组件
 export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
   // 初始化时可检查 localStorage
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       setIsAuthenticated(true);
-      // 如需验证 token 有效性，可再加 API call
+      // 取得使用者資料
+      fetch('/api/auth/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then(res => res.json())
+        .then(data => {
+          // 根據你的 API，可能是 data.username 或 data.name
+          setUser({ name: data.name, username: data.username, email: data.email });
+        })
+        .catch(() => setUser(null));
+    } else {
+      setUser(null);
     }
   }, []);
 
-  const login = async (username: string, password: string) => {
-    const token = await authService.loginAPI(username, password);
+  const login = async (email: string, password: string) => {
+    const token = await authService.loginAPI(email, password);
     localStorage.setItem('token', token);
     setIsAuthenticated(true);
+    // 取得使用者資料
+    fetch('/api/auth/me', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(res => res.json())
+      .then(data => {
+        setUser({ name: data.name, username: data.username, email: data.email });
+      })
+      .catch(() => setUser(null));
   };
 
   const logout = () => {
-    //authService.logoutAPI();
     localStorage.removeItem('token');
     setIsAuthenticated(false);
+    setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, setIsAuthenticated }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, setUser, login, logout, setIsAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );
