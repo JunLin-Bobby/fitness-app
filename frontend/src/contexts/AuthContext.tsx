@@ -5,6 +5,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (u: string, p: string) => Promise<void>;
   logout: () => void;
+  setIsAuthenticated: (v: boolean) => void; // 新增
 }
 
 // 建立 Context
@@ -36,7 +37,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, setIsAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

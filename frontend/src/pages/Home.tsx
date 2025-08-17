@@ -1,23 +1,25 @@
 import { useEffect, useState } from 'react';
 import AddWorkoutLog from '../components/AddWorkoutLog';
+import WorkoutGrid from '../components/WorkoutGrid';
 
 export default function HomePage() {
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
+  const [refreshFlag, setRefreshFlag] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    console.log('JWT token:', token);
+    
     if (token) {
       fetch('/api/auth/me', {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then(res => {
-          console.log('API response status:', res.status);
+          //console.log('API response status:', res.status);
           return res.json();
         })
         .then(data => {
-          console.log('API response data:', data);
+          //console.log('API response data:', data);
           if (data.username) {
             setUsername(data.username);
             setError('');
@@ -37,7 +39,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="w-screen flex flex-col h-screen bg-[#F5F5DC]">
+    <div className="w-screen flex flex-col min-h-screen bg-[#F5F5DC]">
       <main className="flex-1 pt-16">
         <h1 className="text-3xl font-bold">
           Welcome to Fitness Tracker
@@ -45,20 +47,19 @@ export default function HomePage() {
             <span className="ml-2 text-blue-600">({username})</span>
           )}
         </h1>
-        <h1>
-         {!username && (
+        {!username && (
           <div className="text-3xl font-bold">
             Please login to continue.
           </div>
         )}
-        </h1>
-        {/* AddWorkoutLog component here */}
         {username && (
-          <div className="mt-8 flex justify-center">
-            <AddWorkoutLog />
+          <div className="mt-8 flex flex-col items-center w-full">
+            <div className="flex flex-col items-start w-full max-w-2xl gap-8">
+              <WorkoutGrid isLoggedIn={!!username} refreshFlag={refreshFlag} />
+              <AddWorkoutLog onAddSuccess={() => setRefreshFlag(f => !f)} />
+            </div>
           </div>
         )}
-       
       </main>
     </div>
   );

@@ -1,8 +1,11 @@
 // Authentication controller: register and login
 
+const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Register new user
 exports.register = async (req, res) => {
@@ -51,6 +54,36 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+// Google login
+exports.googleLogin = async (req, res) => {
+  try {
+    const { token } = req.body;
+    // 驗證 Google token
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const { email, name } = payload;
+
+    // 檢查是否已有用戶
+    let user = await User.findOne({ email });
+    if (!user) {
+      // 新增用戶（Google 用戶不需密碼）
+      user = new User({ name, email, passwordHash: 'google-oauth' });
+      await user.save();
+    }
+
+    // 產生 JWT
+    const jwtToken = jwt.sign({ id: user._id, name: user.name }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+    res.json({ token: jwtToken, user: { id: user._id, name: user.name, email: user.email } });
+  } catch (err) {
+    res.status(401).json({ message: 'Google login failed' });
+  }
+};
+
 //Get current user info
 exports.getMe = (req, res) => {
   console.log('req.user in getMe:', req.user); // 檢查有沒有資料

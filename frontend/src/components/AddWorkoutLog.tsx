@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import WorkoutLogForm from './WorkoutLogForm';
 
-export default function AddWorkoutLog() {
+export default function AddWorkoutLog({ onAddSuccess }: { onAddSuccess?: () => void }) {
   const [showForm, setShowForm] = useState(false);
 
   return (
@@ -15,7 +15,10 @@ export default function AddWorkoutLog() {
         </button>
       ) : (
         <WorkoutLogForm
-          onSuccess={() => setShowForm(false)}
+          onSuccess={() => {
+            setShowForm(false);
+            onAddSuccess && onAddSuccess();
+          }}
           onCancel={() => setShowForm(false)}
         />
       )}

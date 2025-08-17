@@ -1,21 +1,42 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function AuthCard() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const { login } = useAuth();      // 用 context 提供的 login
+  
+  const { login, setIsAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  const handleGoogleLoginSuccess = async (credentialResponse: any) => {
+  try {
+    const response = await fetch('/api/auth/google', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: credentialResponse.credential }),
+    });
+    const data = await response.json();
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+      setIsAuthenticated(true); // 這裡直接更新 context 狀態
+      navigate('/');
+    } else {
+      setError('Google login failed');
+    }
+  } catch (err) {
+    setError('Google login failed');
+  }
+};
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     try {
-      // 用 context 的 login function
       await login(email, password);
-      navigate('/'); // 登入成功導回首頁（用 navigate 替代 window.location.href，更 react 化）
+      navigate('/');
     } catch (err: any) {
       setError(err.message || 'Login failed');
     }
@@ -48,6 +69,13 @@ export default function AuthCard() {
         >
           Login
         </button>
+        <div className="flex flex-col items-center gap-2">
+          <GoogleLogin
+            onSuccess={handleGoogleLoginSuccess}
+            onError={() => setError('Google login failed')}
+            width={300}
+          />
+        </div>
         <Link to="/register" className="text-blue-600 underline ml-1">
           Register here
         </Link>
