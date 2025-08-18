@@ -17,7 +17,8 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    'https://fitness-app-utvt.onrender.com'
+    'https://fitness-app-utvt.onrender.com',
+    'https://fitness-app-seven-chi.vercel.app' // <--- 新增這行
   ],
   credentials: true
 }));
