@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import AddWorkoutLog from '../components/AddWorkoutLog';
 import WorkoutGrid from '../components/WorkoutGrid';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function HomePage() {
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
@@ -9,17 +11,12 @@ export default function HomePage() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    
     if (token) {
-      fetch('/api/auth/me', {
+      fetch(`${API_BASE_URL}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-        .then(res => {
-          //console.log('API response status:', res.status);
-          return res.json();
-        })
+        .then(res => res.json())
         .then(data => {
-          //console.log('API response data:', data);
           if (data.username) {
             setUsername(data.username);
             setError('');

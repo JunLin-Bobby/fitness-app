@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function WorkoutLogForm({ onSuccess, onCancel }: { onSuccess: () => void, onCancel: () => void }) {
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [muscleGroup, setMuscleGroup] = useState('');
@@ -21,7 +23,7 @@ export default function WorkoutLogForm({ onSuccess, onCancel }: { onSuccess: () 
     setError('');
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch('/api/workouts', {
+      const res = await fetch(`${API_BASE_URL}/workouts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

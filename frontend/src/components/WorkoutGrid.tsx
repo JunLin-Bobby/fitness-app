@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import WorkoutDetailCard from './WorkoutDetailCard';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 type Exercise = {
   name: string;
   sets: number;
@@ -27,7 +29,7 @@ export default function WorkoutGrid({ isLoggedIn, refreshFlag }: { isLoggedIn: b
     if (!isLoggedIn) return;
     setLoading(true);
     const token = localStorage.getItem('token');
-    fetch(`/api/workouts`, {
+    fetch(`${API_BASE_URL}/workouts`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => res.json())
@@ -43,7 +45,7 @@ export default function WorkoutGrid({ isLoggedIn, refreshFlag }: { isLoggedIn: b
     e.preventDefault();
     if (!editLog) return;
     const token = localStorage.getItem('token');
-    const res = await fetch(`/api/workouts/${editLog._id}`, {
+    const res = await fetch(`${API_BASE_URL}/workouts/${editLog._id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -62,7 +64,7 @@ export default function WorkoutGrid({ isLoggedIn, refreshFlag }: { isLoggedIn: b
   // 編輯送出
   const handleSaveEdit = async (log: WorkoutLog) => {
     const token = localStorage.getItem('token');
-    const res = await fetch(`/api/workouts/${log._id}`, {
+    const res = await fetch(`${API_BASE_URL}/workouts/${log._id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -73,7 +75,7 @@ export default function WorkoutGrid({ isLoggedIn, refreshFlag }: { isLoggedIn: b
     if (res.ok) {
       setIsEditing(false);
       // 重新 fetch logs
-      const newRes = await fetch(`/api/workouts`, {
+      const newRes = await fetch(`${API_BASE_URL}/workouts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const newLogs = await newRes.json();
@@ -87,13 +89,13 @@ export default function WorkoutGrid({ isLoggedIn, refreshFlag }: { isLoggedIn: b
 
   const handleDelete = async (id: string) => {
     const token = localStorage.getItem('token');
-    const res = await fetch(`/api/workouts/${id}`, {
+    const res = await fetch(`${API_BASE_URL}/workouts/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });
     if (res.ok) {
       // 重新 fetch logs
-      const newRes = await fetch(`/api/workouts`, {
+      const newRes = await fetch(`${API_BASE_URL}/workouts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const newLogs = await newRes.json();

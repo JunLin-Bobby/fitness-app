@@ -1,4 +1,4 @@
-// src/services/authService.ts
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Encapsulates all backend calls related to user authentication
 export async function loginAPI(
@@ -6,7 +6,7 @@ export async function loginAPI(
   password: string
 ): Promise<string> {
   // Send credentials to the login endpoint and return the JWT on success
-  const res = await fetch('/api/auth/login', {
+  const res = await fetch(`${API_BASE_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
@@ -31,7 +31,7 @@ export async function registerAPI(
   email: string,
   password: string
 ): Promise<string> {
-  const res = await fetch('/api/auth/register', {
+  const res = await fetch(`${API_BASE_URL}/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, email, password }),

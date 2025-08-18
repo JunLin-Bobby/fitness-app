@@ -19,6 +19,8 @@ interface AuthContextType {
 // 建立 Context
 const AuthContext = createContext<AuthContextType | null>(null);
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 // Provider 组件
 export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -29,13 +31,11 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
     const token = localStorage.getItem('token');
     if (token) {
       setIsAuthenticated(true);
-      // 取得使用者資料
-      fetch('/api/auth/me', {
+      fetch(`${API_BASE_URL}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then(res => res.json())
         .then(data => {
-          // 根據你的 API，可能是 data.username 或 data.name
           setUser({ name: data.name, username: data.username, email: data.email });
         })
         .catch(() => setUser(null));
@@ -48,8 +48,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
     const token = await authService.loginAPI(email, password);
     localStorage.setItem('token', token);
     setIsAuthenticated(true);
-    // 取得使用者資料
-    fetch('/api/auth/me', {
+    fetch(`${API_BASE_URL}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => res.json())
