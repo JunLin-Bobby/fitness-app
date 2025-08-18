@@ -22,7 +22,6 @@ export default function WorkoutGrid({ isLoggedIn, refreshFlag }: { isLoggedIn: b
   const [logs, setLogs] = useState<WorkoutLog[]>([]);
   const [selected, setSelected] = useState<WorkoutLog | null>(null);
   const [loading, setLoading] = useState(false);
-  const [editLog, setEditLog] = useState<WorkoutLog | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
