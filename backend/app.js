@@ -14,7 +14,13 @@ connectDB();
 const app = express();
 
 // Enable CORS for all routes (you may restrict origins in production)
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://fitness-app-utvt.onrender.com'
+  ],
+  credentials: true
+}));
 
 // Parse JSON requests
 app.use(express.json());
