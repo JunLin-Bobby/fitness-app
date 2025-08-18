@@ -6,7 +6,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function HomePage() {
   const [username, setUsername] = useState('');
-  const [error, setError] = useState('');
+  const [,setError] = useState('');
   const [refreshFlag, setRefreshFlag] = useState(false);
 
   useEffect(() => {

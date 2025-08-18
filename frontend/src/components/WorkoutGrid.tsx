@@ -41,25 +41,25 @@ export default function WorkoutGrid({ isLoggedIn, refreshFlag }: { isLoggedIn: b
   }, [isLoggedIn, refreshFlag]);
 
   // 編輯表單送出
-  const handleEditSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editLog) return;
-    const token = localStorage.getItem('token');
-    const res = await fetch(`${API_BASE_URL}/workouts/${editLog._id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(editLog),
-    });
-    if (res.ok) {
-      setEditLog(null);
-      setSelected(null);
-      // 觸發刷新
-      window.location.reload();
-    }
-  };
+//   const handleEditSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     if (!editLog) return;
+//     const token = localStorage.getItem('token');
+//     const res = await fetch(`${API_BASE_URL}/workouts/${editLog._id}`, {
+//       method: 'PUT',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         Authorization: `Bearer ${token}`,
+//       },
+//       body: JSON.stringify(editLog),
+//     });
+//     if (res.ok) {
+//       setEditLog(null);
+//       setSelected(null);
+//       // 觸發刷新
+//       window.location.reload();
+//     }
+//   };
 
   // 編輯送出
   const handleSaveEdit = async (log: WorkoutLog) => {
